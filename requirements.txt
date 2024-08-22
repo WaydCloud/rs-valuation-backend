@@ -1,0 +1,14 @@
+fastapi
+fastapi_websocket_pubsub
+uvicorn
+konlpy
+transformers
+torch
+firebase-admin
+httpx
+beautifulsoup4
+requests
+asyncio
+load_dotenv
+websockets
+aiohttp
