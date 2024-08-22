@@ -64,7 +64,7 @@ async def crawling_songs(artist_id: str):
     except Exception as e:
         logger.error(f"Exception : {str(e)}")
 
-async def get_artist(artist_id: str):
+async def bring_artist(artist_id: str):
     try:
         artist_info = await load_artist(artist_id)
         if artist_info:
@@ -77,7 +77,7 @@ async def get_artist(artist_id: str):
         logger.error(f"Connection failed to load {artist_id}")
         return None
     
-async def get_songs(artist_id: str):
+async def bring_songs(artist_id: str):
     try:
         songs = await load_artist_songs(artist_id)
         if songs:
@@ -90,7 +90,7 @@ async def get_songs(artist_id: str):
         logger.error(f"Connection failed to load {artist_id} Songs")
         return None
     
-async def get_all_artists():
+async def bring_all_artists():
     try:
         artists = await load_all_artists()
         if artists:
