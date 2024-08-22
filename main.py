@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from async_processor import add_task, call_status, start_worker
-from tasks import crawling_artist, crawling_albums, crawling_songs, get_artist, get_all_artists, get_songs
+from tasks import crawling_artist, crawling_albums, crawling_songs, bring_artist, bring_all_artists, bring_songs
 from typing import List, Dict
 
 
@@ -83,16 +83,16 @@ async def crawling_songs_endpoint(artist_id: str):
     return {"status": "task queued", "task_id" : task_id}
 
 @app.get("/firebase/load/artist/{artist_id}")
-async def get_artist_endpoint(artist_id: str):
-    artist_data = await get_artist(artist_id)
+async def bring_artist_endpoint(artist_id: str):
+    artist_data = await bring_artist(artist_id)
     return {"status": "success", "data": artist_data}
 
 @app.get("/firebase/load/{artist_id}/songs")
-async def get_songs_endpoint(artist_id: str):
-    songs_data = await get_songs(artist_id)
+async def bring_songs_endpoint(artist_id: str):
+    songs_data = await bring_songs(artist_id)
     return {"status": "success", "data": songs_data}
 
 @app.get('/firebase/load/artists')
-async def get_all_artists_endpoint():
-    artists = await get_all_artists()
+async def bring_all_artists_endpoint():
+    artists = await bring_all_artists()
     return {"status": "success", "data": artists}
