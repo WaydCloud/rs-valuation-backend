@@ -12,3 +12,5 @@ asyncio
 load_dotenv
 websockets
 aiohttp
+os
+google.oauth2
