@@ -2,9 +2,14 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import asyncio
 import os
+from google.oauth2 import service_account
 
-cred = credentials.Certificate(cred_path)
-firebase_admin.initialize_app(cred)
+logger = logging.getLogger(__name__)
+
+if not firebase_admin._apps:
+
+    cred = credentials.Certificate.from_service_account_file(/etc/secrets/firebase-service-account-key.json)
+    firebase_admin.initialize_app(cred)
 
 async def save_artist(artist: dict) -> bool:
     try:
