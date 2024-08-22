@@ -13,3 +13,4 @@ load_dotenv
 websockets
 aiohttp
 google-auth
+logging
