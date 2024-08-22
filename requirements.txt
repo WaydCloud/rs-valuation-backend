@@ -12,4 +12,4 @@ asyncio
 load_dotenv
 websockets
 aiohttp
-google.oauth2
+google-auth
