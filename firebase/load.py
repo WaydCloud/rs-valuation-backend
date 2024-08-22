@@ -2,12 +2,14 @@ import firebase_admin
 from firebase_admin import firestore, credentials
 import asyncio
 import logging
+import os
+from google.oauth2 import service_account
 
 logger = logging.getLogger(__name__)
 
 if not firebase_admin._apps:
 
-    cred = credentials.Certificate(cred_path)
+    cred = credentials.Certificate.from_service_account_file(/etc/secrets/firebase-service-account-key.json)
     firebase_admin.initialize_app(cred)
 
 async def load_artist(artist_id: str):
