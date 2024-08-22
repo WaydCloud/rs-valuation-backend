@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 if not firebase_admin._apps:
 
-    cred = credentials.Certificate.from_service_account_file('/etc/secrets/firebase-service-account-key.json')
+    cred = credentials.Certificate('/etc/secrets/firebase-service-account-key.json')
     firebase_admin.initialize_app(cred)
 
 async def save_artist(artist: dict) -> bool:
