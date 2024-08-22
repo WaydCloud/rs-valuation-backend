@@ -3,6 +3,7 @@ from firebase_admin import credentials, firestore
 import asyncio
 import os
 from google.oauth2 import service_account
+import logging
 
 logger = logging.getLogger(__name__)
 
