@@ -2,8 +2,11 @@ import logging
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from async_processor import add_task, call_status, start_worker
-from tasks import crawling_artist, crawling_albums, crawling_songs, bring_artist, bring_all_artists, bring_songs
-from typing import List, Dict
+from tasks import crawling_artist, crawling_albums, crawling_songs, crawling_videos, crawling_photos,crawling_comments, bring_artist, bring_all_artists, bring_albums, bring_songs, bring_album_comments, bring_artist_comments, bring_latest_comments, process_keywords, bring_videos, bring_photos
+from recommendation import predict_future_streams
+from pydantic import BaseModel, FieldValidationInfo, field_validator
+from typing import List, Dict, Any, Optional
+from datetime import datetime
 
 
 #=====================#
@@ -82,17 +85,90 @@ async def crawling_songs_endpoint(artist_id: str):
     add_task(task_id, crawling_songs, artist_id)
     return {"status": "task queued", "task_id" : task_id}
 
+@app.get("/crawling/melon/{artist_id}/videos")
+async def crawling_videos_endpoint(artist_id: str):
+    task_id = f"crawling-videos-{artist_id}"
+    add_task(task_id, crawling_videos, artist_id)
+    return {"status": "task queued", "task_id" : task_id}
+
+@app.get("/crawling/melon/{artist_id}/photos")
+async def crawling_photos_endpoint(artist_id: str):
+    task_id = f"crawling-photos-{artist_id}"
+    add_task(task_id, crawling_photos, artist_id)
+    return {"status": "task queued", "task_id" : task_id}
+
+@app.get("/crawling/melon/{artist_id}/comments")
+async def crawling_comments_endpoint(artist_id: str):
+    task_id = f"crawling-comments-{artist_id}"
+    add_task(task_id, crawling_comments, artist_id)
+    return {"status": "task queued", "task_id" : task_id}
+
 @app.get("/firebase/load/artist/{artist_id}")
 async def bring_artist_endpoint(artist_id: str):
     artist_data = await bring_artist(artist_id)
     return {"status": "success", "data": artist_data}
+
+@app.get("/firebase/load/{artist_id}/albums")
+async def bring_albums_endpoint(artist_id: str):
+    songs_data = await bring_albums(artist_id)
+    return {"status": "success", "data": songs_data}
 
 @app.get("/firebase/load/{artist_id}/songs")
 async def bring_songs_endpoint(artist_id: str):
     songs_data = await bring_songs(artist_id)
     return {"status": "success", "data": songs_data}
 
+@app.get("/firebase/load/{artist_id}/videos")
+async def bring_videos_endpoint(artist_id: str):
+    videos_data = await bring_videos(artist_id)
+    return {"status": "success", "data": videos_data}
+
+@app.get("/firebase/load/{artist_id}/photos")
+async def bring_photos_endpoint(artist_id: str):
+    photos_data = await bring_photos(artist_id)
+    return {"status": "success", "data": photos_data}
+
+@app.get("/firebase/load/{artist_id}/{album_id}/comments")
+async def bring_album_comments_endpoint(album_id: str):
+    comments_data = await bring_album_comments(album_id)
+    return {"status": "success", "data": comments_data}
+
+@app.get("/firebase/load/{artist_id}/comments")
+async def bring_artist_comments_endpoint(artist_id: str):
+    comments_data = await bring_artist_comments(artist_id)
+    return {"status": "success", "data": comments_data}
+
+@app.get("/firebase/load/{artist_id}/comments/latest")
+async def bring_latest_comment_endpoint(artist_id: str):
+    comments = await bring_latest_comments(artist_id)
+    return {"status": "success", "data": comments}
+
 @app.get('/firebase/load/artists')
 async def bring_all_artists_endpoint():
     artists = await bring_all_artists()
     return {"status": "success", "data": artists}
+
+@app.post('/process/keywords/frequency')
+async def process_keywords_frequency_endpoint(comments: Dict[str, Any]):
+    frequencies = process_keywords(comments["data"])
+    return {"status": "success", "data": frequencies}
+
+class Metrics(BaseModel):
+    followers: int
+    songsReleased: int
+    albumsReleased: int
+    releaseFrequency: float
+    totalLikes: int
+    totalStreams: int
+    totalComments: int
+    totalVideos: int
+    totalPhotos: int
+
+class TrainingData(BaseModel):
+    targetMetrics: Metrics
+    compareMetrics: List[Metrics]
+
+@app.post('/process/recommendation')
+async def recommendation_endpoint(training_data: TrainingData):
+    recommendation = await predict_future_streams(training_data)
+    return {"status": "success", "data": recommendation} 
