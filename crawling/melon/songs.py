@@ -138,12 +138,16 @@ async def get_songs(artist_id: str) -> dict:
 
     song_data = await asyncio.gather(*tasks)
 
-    return {
+    result = {
         'total_hearts': total_hearts,
         'total_listeners': total_listeners,
         'total_streams': total_streams,
         'songs': song_data
     }
+
+    logger.info(f"Result : {result}")
+
+    return result
 
 # 노래 ID를 나누는 유틸리티 함수
 def chunks(lst, n):
