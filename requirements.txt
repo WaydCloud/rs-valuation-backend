@@ -2,6 +2,7 @@ fastapi
 fastapi_websocket_pubsub
 uvicorn
 konlpy
+scikit-learn
 transformers
 torch
 firebase-admin
@@ -9,8 +10,12 @@ httpx
 beautifulsoup4
 requests
 asyncio
-load_dotenv
+python-dotenv
 websockets
 aiohttp
-google-auth
-logging
+pandas
+numpy
+xgboost
+tensorflow
+pydantic
+keras
